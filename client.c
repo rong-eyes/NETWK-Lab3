@@ -78,7 +78,7 @@ int main(int argc, char *argv[]){
 		
 		//constructing message
 		struct client_infoTag{
-			char name[64]; //declaration of client_name: char client_name[64] = "Client of Hal Jordan";
+			char name[64]; //declaration of client_name: char client_name[64] = "Client of John Doe";
 			int num;
 		} client_info;
 		
@@ -90,15 +90,28 @@ int main(int argc, char *argv[]){
 		int send_success = send(net_socket, (char *)&client_info, sizeof(client_info), 0);
 		if(send_success == SOCKET_ERROR){
 			printf("Failed to send message.\n");
+		}else{
+			printf("Message sent successfully.\n");
 		}
 		
 		//receiving message from server
-		char server_mssg[256];
 		
-		int received = recv(net_socket, server_mssg, sizeof(server_mssg) -1, 0);
+		struct server_infoTag {
+    		char name[64];
+  			int num;
+		}server_info;
+
+		
+		int received = recv(net_socket, (char *)&server_info, sizeof(server_info) -1, 0);
 		if(received > 0){
-			server_mssg[received] = '\0';
-			printf("Server Response: \n\n %s \n", server_mssg);
+			printf("\nServer name: %s\n", server_info.name);
+	    	printf("Server number: %d\n", server_info.num);
+	
+	    	int sum = client_num + server_info.num;
+	
+		    printf("Client number: %d\n", client_num);
+		    printf("Sum: %d\n", sum);
+	    
 		}else{
 			printf("Failed to receive server response.\n");
 		}
