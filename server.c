@@ -21,7 +21,7 @@ int main(int argc, char *argv[]){
     WSAStartup(MAKEWORD(2, 2), &wsa);
 	#endif
 	
-	char server_name[256] = "Server of OA";
+	char server_name[256] = "Server of John Doe";
 	char connect_confirm[256] = "Client has reached the server!";
 	
 	//setting up socket
@@ -35,7 +35,7 @@ int main(int argc, char *argv[]){
 	//setting up sever ddress
 	struct sockaddr_in server_addr;
 	server_addr.sin_family = AF_INET;
-	server_addr.sin_port = htons(2814);	
+	server_addr.sin_port = htons(6885);	
 	server_addr.sin_addr.s_addr = INADDR_ANY; //accepts any local connect
 	
 	//binding thee socket to the specifid port and IP
