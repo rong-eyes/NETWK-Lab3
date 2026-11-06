@@ -1,0 +1,140 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#ifdef _WIN32
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
+    #pragma comment(lib, "ws2_32.lib") // Links the Winsock library for MSVC
+#else
+    #include <sys/socket.h>
+    #include <netinet/in.h>
+#endif
+
+int main(int argc, char *argv[]){	
+	
+	//WSA startup
+	#ifdef _WIN32
+    WSADATA wsa;
+    WSAStartup(MAKEWORD(2, 2), &wsa);
+	#endif
+	
+	//creating a socket
+	int net_socket;
+	net_socket = socket(AF_INET, SOCK_STREAM, 0); //IPv4, Socket Stream, TCP
+	
+	//check creaation status
+	if(net_socket < 0){
+		printf("Socket Creation failed.\n");
+		return 1;
+	}
+	
+	//setting up the ddress of the server it will connect to
+	struct sockaddr_in server_addr;
+	
+	memset(&server_addr, 0, sizeof(server_addr));
+	
+	char server_ip[INET_ADDRSTRLEN];
+	
+	printf("Enter server IP address: ");
+	scanf("%15s", server_ip);
+	
+	server_addr.sin_family = AF_INET;
+	server_addr.sin_port = htons(2814);
+
+if (inet_pton(AF_INET, server_ip, &server_addr.sin_addr) != 1) {
+    printf("Invalid IP address.\n");
+    closesocket(net_socket);
+    WSACleanup();
+    return 1;
+}
+
+	
+	//Accepting integer from user
+	int client_num = 0;
+	char client_name[64] = "Client of Hal Jordan";
+	printf("Enter an integer from 1 to 100: ");
+	scanf("%d", &client_num);
+		
+	if(client_num < 1 || client_num > 100) {			//if int is out of range close the socket
+		printf("Number out of range...\n Closing socket...\n");
+		closesocket(net_socket);
+		printf("Socket closed.\n");
+		
+		//peventing errors
+			#ifdef _WIN32
+		    closesocket(net_socket);
+		    WSACleanup();
+		#else
+		    close(net_socket);
+		#endif
+		
+		    return 1;
+	}
+	
+	//initiating and checking connection to server
+	int connect_success = connect(net_socket, (struct sockaddr*) &server_addr, sizeof(server_addr)); //returns an integer indicating connection success
+	
+	if(connect_success == -1){
+		printf("There was an error connecting to the server.\n\n");
+		#ifdef _WIN32
+        printf("Error code: %d\n", WSAGetLastError());
+		#else
+        perror("connect");
+		#endif
+	}else{
+		printf("Connection successful!\n\n");
+		
+		//constructing message
+		struct client_infoTag{
+			char name[64]; //declaration of client_name: char client_name[64] = "Client of John Doe";
+			int num;
+		} client_info;
+		
+		strncpy(client_info.name, client_name, sizeof(client_info.name) -1);
+		client_info.name[sizeof(client_info.name) - 1] = '\0';
+		client_info.num = client_num;
+		
+		//sending to the server
+		int send_success = send(net_socket, (char *)&client_info, sizeof(client_info), 0);
+		if(send_success == SOCKET_ERROR){
+			printf("Failed to send message.\n");
+		}else{
+			printf("Message sent successfully.\n");
+		}
+		
+		//receiving message from server
+		
+		struct server_infoTag {
+    		char name[64];
+  			int num;
+		}server_info;
+
+		
+		int received = recv(net_socket, (char *)&server_info, sizeof(server_info) -1, 0);
+		if(received > 0){
+			printf("\nServer name: %s\n", server_info.name);
+	    	printf("Server number: %d\n", server_info.num);
+	
+	    	int sum = client_num + server_info.num;
+	
+		    printf("Client number: %d\n", client_num);
+		    printf("Sum: %d\n", sum);
+	    
+		}else{
+			printf("Failed to receive server response.\n");
+		}
+		
+		//we close the connection once its done
+		#ifdef _WIN32
+    	closesocket(net_socket);
+	    WSACleanup();
+	#else
+	    close(net_socket);
+	#endif
+	}
+
+	system("pause"); 
+	return 0;
+}
+
