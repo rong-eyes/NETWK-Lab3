@@ -41,7 +41,7 @@ int main(int argc, char *argv[]){
 	
 	//Accepting integer from user
 	int client_num = 0;
-	char client_name[64] = "Client of John Doe";
+	char client_name[64] = "Client of Yreana & Samira";
 	printf("Enter an integer from 1 to 100: ");
 	scanf("%d", &client_num);
 		
