@@ -76,7 +76,7 @@ int main(int argc, char *argv[]){
 		
 		//constructing message
 		struct client_infoTag{
-			char name[64]; //declaration of client_name: char client_name[64] = "Client of John Doe";
+			char name[64]; //declaration of client_name: char client_name[64] = "Client of Yreana & Samira";
 			int num;
 		} client_info;
 		
