@@ -21,9 +21,8 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    // replace "John Doe" with your actual name
-    char server_name[64] = "Server of John Doe";
-    srand(time(0)); // Seed random number generator once
+    char server_name[64] = "Server of Yreana & Samira";
+    srand(time(0)); 
 
     // create the TCP welcoming socket
     int server_socket = socket(AF_INET, SOCK_STREAM, 0);
