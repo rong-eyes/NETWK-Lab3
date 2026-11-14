@@ -102,6 +102,7 @@ int main(int argc, char *argv[]){
 		
 		int received = recv(net_socket, (char *)&server_info, sizeof(server_info), 0);
 		if(received > 0){
+			printf("Client name: %s\n", client_name);
 			printf("\nServer name: %s\n", server_info.name);
 	    	printf("Server number: %d\n", server_info.num);
 	
